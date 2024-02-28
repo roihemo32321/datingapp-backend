@@ -13,7 +13,8 @@ namespace dating_backend.Extensions
             services.AddDbContext<DataContext>(opt => opt.UseSqlite(config.GetConnectionString("DefaultConnection")));
             services.AddCors();  // Adding cors to our application to allow origins to send methods and headers.
             services.AddScoped<ITokenService, TokenService>(); // Adding the Token by scoped version.
-
+            services.AddScoped<IUserRepository, UserRepository>(); // Adding User Repository to the scope of the http request.
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // Adding AutoMapper Service.
             return services;
         }
     }
