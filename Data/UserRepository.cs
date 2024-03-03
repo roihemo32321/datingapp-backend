@@ -19,7 +19,7 @@ namespace dating_backend.Data
 
         public async Task<IEnumerable<MemberDto>> GetMembersAsync()
         {
-           return await _context.Users.ProjectTo<MemberDto>(_mapper.ConfigurationProvider).ToListAsync();
+            return await _context.Users.ProjectTo<MemberDto>(_mapper.ConfigurationProvider).ToListAsync(); // ProjectTo is a function from AutoMapper that help us to map the data.
         }
 
         public Task<MemberDto> GetMemberAsync(string username)

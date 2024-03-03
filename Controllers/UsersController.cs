@@ -2,6 +2,7 @@
 using dating_backend.DTOs;
 using dating_backend.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace dating_backend.Controllers
 {
@@ -26,6 +27,21 @@ namespace dating_backend.Controllers
         public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
             return await _userRepository.GetMemberAsync(username);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+        {
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Getting our user from the JWT Token we provided.
+            var user = await _userRepository.GetUserByUsernameAsync(username); // Getting the user details from the database.
+
+            if (user == null) return NotFound();
+
+            _mapper.Map(memberUpdateDto, user); // Mapping the values into our user varibale using _automapper.
+
+            if (await _userRepository.SaveAllAsync()) return NoContent();
+
+            return BadRequest("Failed to update user.");
         }
     }
 }
