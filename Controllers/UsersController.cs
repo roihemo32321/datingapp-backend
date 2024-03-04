@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using dating_backend.DTOs;
+using dating_backend.Entities;
+using dating_backend.Extensions;
 using dating_backend.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace dating_backend.Controllers
 {
@@ -10,10 +11,13 @@ namespace dating_backend.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public UsersController(IUserRepository userRepository, IMapper mapper)
+        private readonly IPhotoService _photoService;
+
+        public UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService)
         {
             _mapper = mapper;
             _userRepository = userRepository;
+            _photoService = photoService;
         }
 
         [HttpGet]
@@ -32,8 +36,7 @@ namespace dating_backend.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
         {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Getting our user from the JWT Token we provided.
-            var user = await _userRepository.GetUserByUsernameAsync(username); // Getting the user details from the database.
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName()); // Getting the user details from the database.
 
             if (user == null) return NotFound();
 
@@ -42,6 +45,40 @@ namespace dating_backend.Controllers
             if (await _userRepository.SaveAllAsync()) return NoContent();
 
             return BadRequest("Failed to update user.");
+        }
+
+        [HttpPost("add-photo")]
+        public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
+        {
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName()); // Getting the user details from the database.
+            if (user == null) return NotFound();
+
+            var result = await _photoService.AddPhotoAsync(file);
+
+            if (result.Error != null) return BadRequest(result.Error.Message);
+
+            var photo = new Photo
+            {
+                Url = result.SecureUrl.AbsoluteUri,
+                PublicId = result.PublicId,
+            };
+
+            if (user.Photos.Count == 0)
+            {
+                photo.IsMain = true;
+            }
+
+            user.Photos.Add(photo);
+
+            if (await _userRepository.SaveAllAsync())
+            {
+                return CreatedAtAction(nameof(GetUser),
+                    new { username = user.UserName },
+                    _mapper.Map<PhotoDto>(photo)); // Returning a 201 response with the api where they can find the new created value.
+            }
+
+            return BadRequest("Problem adding photo");
+
         }
     }
 }

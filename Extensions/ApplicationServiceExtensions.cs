@@ -1,4 +1,5 @@
 ﻿using dating_backend.Data;
+using dating_backend.Helpers;
 using dating_backend.Interfaces;
 using dating_backend.Services;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,9 @@ namespace dating_backend.Extensions
             services.AddScoped<ITokenService, TokenService>(); // Adding the Token by scoped version.
             services.AddScoped<IUserRepository, UserRepository>(); // Adding User Repository to the scope of the http request.
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // Adding AutoMapper Service.
+            services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings")); // Configure Cloudinary to our application using the helper settings we created.
+            services.AddScoped<IPhotoService, PhotoService>(); // Adding our cloudinary photo service.
+
             return services;
         }
     }
