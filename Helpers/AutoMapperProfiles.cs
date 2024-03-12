@@ -14,6 +14,7 @@ namespace dating_backend.Helpers
                 .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.DateOfBirth.CalculateAge())); // Map to go from User to MemberDTO.
             CreateMap<Photo, PhotoDto>(); // Map to go from Photo to PhotoDTO.
             CreateMap<MemberUpdateDto, User>();
+            CreateMap<RegisterDto, User>();
         }
     }
 }
