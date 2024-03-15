@@ -2,6 +2,7 @@
 using dating_backend.DTOs;
 using dating_backend.Entities;
 using dating_backend.Extensions;
+using dating_backend.Helpers;
 using dating_backend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,9 +24,13 @@ namespace dating_backend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+        public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
         {
-            var users = await _userRepository.GetMembersAsync();
+            var users = await _userRepository.GetMembersAsync(userParams);
+
+            Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize,
+                users.TotalCount, users.TotalPages));
+
             return Ok(users);
         }
 
@@ -83,11 +88,11 @@ namespace dating_backend.Controllers
 
         }
 
-        [HttpPut("set-main-photo/{photoId}")] 
+        [HttpPut("set-main-photo/{photoId}")]
         public async Task<ActionResult> SetMainPhoto(int photoId)
         {
             var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
-            if(user == null) return NotFound();
+            if (user == null) return NotFound();
 
             var photo = user.Photos.FirstOrDefault(p => p.Id == photoId);
             if (photo == null) return NotFound();
@@ -98,7 +103,7 @@ namespace dating_backend.Controllers
             if (currentMain != null) currentMain.IsMain = false;
             photo.IsMain = true;
 
-            if(await _userRepository.SaveAllAsync()) return NoContent();
+            if (await _userRepository.SaveAllAsync()) return NoContent();
 
             return BadRequest("Problem setting the photo to main.");
         }
@@ -107,14 +112,14 @@ namespace dating_backend.Controllers
         public async Task<ActionResult> DeletePhoto(int photoId)
         {
             var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
-            if(user == null) return NotFound("User not found!");
+            if (user == null) return NotFound("User not found!");
 
             var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
             if (photo == null) return NotFound("Photo not found!");
 
             if (photo.IsMain) return BadRequest("You cannot delete your main photo");
 
-            if(photo.PublicId != null)
+            if (photo.PublicId != null)
             {
                 var result = await _photoService.DeletePhotoAsync(photo.PublicId);
                 if (result.Error != null) return BadRequest(result.Error.Message);
