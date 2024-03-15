@@ -22,7 +22,7 @@ namespace dating_backend.Helpers
             int pageNumber, int pageSize)
         {
             var count = await source.CountAsync(); // Getting the count of the query.
-            var items = await source.Skip(pageNumber).Take(pageSize).ToListAsync();
+            var items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return new PagedList<T>(items, count, pageNumber, pageSize);
         }
