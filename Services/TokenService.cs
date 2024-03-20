@@ -14,11 +14,13 @@ namespace dating_backend.Services
         {
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
         }
+
         public string CreateToken(User user)
         {
             var claims = new List<Claim>
             {
-                new(JwtRegisteredClaimNames.NameId, user.UserName)
+                new(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+                new(JwtRegisteredClaimNames.UniqueName, user.UserName)
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature); // Credentials to sign the Token. Getting the key and the algorithm to encrypt the key.

@@ -18,7 +18,7 @@ namespace dating_backend.Extensions
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // Adding AutoMapper Service.
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings")); // Configure Cloudinary to our application using the helper settings we created.
             services.AddScoped<IPhotoService, PhotoService>(); // Adding our cloudinary photo service.
-
+            services.AddScoped<LogUserActivity>();
             return services;
         }
     }
