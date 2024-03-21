@@ -9,14 +9,31 @@ namespace dating_backend.Helpers
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var resultContext = await next();
-            if (resultContext.HttpContext.User.Identity.IsAuthenticated) return;
 
+            // Check if the user is authenticated
+            if (!resultContext.HttpContext.User.Identity.IsAuthenticated)
+            {
+                return;
+            }
+
+            // Get the user ID from the claims
             var userId = resultContext.HttpContext.User.GetUserId();
+            if (!userId.HasValue)
+            {
+                // If there is no valid user ID, just return
+                return;
+            }
 
+            // Get the user repository from the service provider
             var repo = resultContext.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
-            var user = await repo.GetUserByIdAsync(userId);
-            user.LastActive = DateTime.UtcNow;
-            await repo.SaveAllAsync();
+
+            // Get the user by ID and update the last active date
+            var user = await repo.GetUserByIdAsync(userId.Value);
+            if (user != null)
+            {
+                user.LastActive = DateTime.UtcNow;
+                await repo.SaveAllAsync();
+            }
         }
     }
 }
