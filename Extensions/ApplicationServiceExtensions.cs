@@ -19,6 +19,7 @@ namespace dating_backend.Extensions
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings")); // Configure Cloudinary to our application using the helper settings we created.
             services.AddScoped<IPhotoService, PhotoService>(); // Adding our cloudinary photo service.
             services.AddScoped<LogUserActivity>();
+            services.AddScoped<ILikesRepository, LikesRepository>();
             return services;
         }
     }

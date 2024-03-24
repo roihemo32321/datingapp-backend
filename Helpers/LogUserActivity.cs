@@ -18,17 +18,12 @@ namespace dating_backend.Helpers
 
             // Get the user ID from the claims
             var userId = resultContext.HttpContext.User.GetUserId();
-            if (!userId.HasValue)
-            {
-                // If there is no valid user ID, just return
-                return;
-            }
 
             // Get the user repository from the service provider
             var repo = resultContext.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
 
             // Get the user by ID and update the last active date
-            var user = await repo.GetUserByIdAsync(userId.Value);
+            var user = await repo.GetUserByIdAsync(userId);
             if (user != null)
             {
                 user.LastActive = DateTime.UtcNow;
