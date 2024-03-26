@@ -20,7 +20,7 @@ namespace dating_backend.Services
             var claims = new List<Claim>
             {
                 new(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
-                new(JwtRegisteredClaimNames.UniqueName, user.UserName)
+                new(JwtRegisteredClaimNames.UniqueName, user.Username)
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature); // Credentials to sign the Token. Getting the key and the algorithm to encrypt the key.

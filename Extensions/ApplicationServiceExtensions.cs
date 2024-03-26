@@ -20,6 +20,8 @@ namespace dating_backend.Extensions
             services.AddScoped<IPhotoService, PhotoService>(); // Adding our cloudinary photo service.
             services.AddScoped<LogUserActivity>();
             services.AddScoped<ILikesRepository, LikesRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+
             return services;
         }
     }

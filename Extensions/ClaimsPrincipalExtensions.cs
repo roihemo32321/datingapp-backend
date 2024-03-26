@@ -4,7 +4,7 @@ namespace dating_backend.Extensions
 {
     public static class ClaimsPrincipalExtensions
     {
-        public static string GetUserName(this ClaimsPrincipal user)
+        public static string GetUsername(this ClaimsPrincipal user)
         {
             return user.FindFirst(ClaimTypes.Name)?.Value; // Getting our user from the JWT Token we provided in the ClaimsPrincipal of our application.
         }

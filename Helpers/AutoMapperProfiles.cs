@@ -15,6 +15,9 @@ namespace dating_backend.Helpers
             CreateMap<Photo, PhotoDto>(); // Map to go from Photo to PhotoDTO.
             CreateMap<MemberUpdateDto, User>();
             CreateMap<RegisterDto, User>();
+            CreateMap<Message, MessageDto>()
+                .ForMember(d => d.SenderPhotoUrl, o => o.MapFrom(s => s.Sender.Photos.FirstOrDefault(x => x.IsMain).Url))
+                .ForMember(d => d.RecipientPhotoUrl, o => o.MapFrom(s => s.Recipient.Photos.FirstOrDefault(x => x.IsMain).Url));
         }
     }
 }

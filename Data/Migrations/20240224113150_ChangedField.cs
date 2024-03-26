@@ -13,14 +13,14 @@ namespace dating_backend.Data.Migrations
             migrationBuilder.RenameColumn(
                 name: "Name",
                 table: "Users",
-                newName: "UserName");
+                newName: "Username");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "UserName",
+                name: "Username",
                 table: "Users",
                 newName: "Name");
         }

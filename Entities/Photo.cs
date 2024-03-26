@@ -2,7 +2,7 @@
 
 namespace dating_backend.Entities
 {
-    [Table("Photos")] // Overide EF to make it a table.
+    [Table("Photos")] // Override EF to make it a table.
     public class Photo
     {
         public int Id { get; set; }

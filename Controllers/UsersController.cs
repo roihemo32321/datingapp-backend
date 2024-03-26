@@ -26,10 +26,10 @@ namespace dating_backend.Controllers
         [HttpGet]
         public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
         {
-            var currentUser = await _userRepository.GetUserByUsernameAsync(User.GetUserName()); // Getting the currentUser that sent the req.
-            userParams.CurrentUsername = currentUser.UserName; 
+            var currentUser = await _userRepository.GetUserByUsernameAsync(User.GetUsername()); // Getting the currentUser that sent the req.
+            userParams.CurrentUsername = currentUser.Username;
 
-            if(string.IsNullOrEmpty(userParams.Gender))
+            if (string.IsNullOrEmpty(userParams.Gender))
             {
                 userParams.Gender = currentUser.Gender == "male" ? "female" : "male";
             }
@@ -51,7 +51,7 @@ namespace dating_backend.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName()); // Getting the user details from the database.
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername()); // Getting the user details from the database.
 
             if (user == null) return NotFound();
 
@@ -65,7 +65,7 @@ namespace dating_backend.Controllers
         [HttpPost("add-photo")]
         public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName()); // Getting the user details from the database.
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername()); // Getting the user details from the database.
             if (user == null) return NotFound();
 
             var result = await _photoService.AddPhotoAsync(file);
@@ -88,7 +88,7 @@ namespace dating_backend.Controllers
             if (await _userRepository.SaveAllAsync())
             {
                 return CreatedAtAction(nameof(GetUser),
-                    new { username = user.UserName },
+                    new { username = user.Username },
                     _mapper.Map<PhotoDto>(photo)); // Returning a 201 response with the api where they can find the new created value.
             }
 
@@ -99,7 +99,7 @@ namespace dating_backend.Controllers
         [HttpPut("set-main-photo/{photoId}")]
         public async Task<ActionResult> SetMainPhoto(int photoId)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
             if (user == null) return NotFound();
 
             var photo = user.Photos.FirstOrDefault(p => p.Id == photoId);
@@ -119,7 +119,7 @@ namespace dating_backend.Controllers
         [HttpDelete("delete-photo/{photoId}")]
         public async Task<ActionResult> DeletePhoto(int photoId)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(User.GetUserName());
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
             if (user == null) return NotFound("User not found!");
 
             var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
