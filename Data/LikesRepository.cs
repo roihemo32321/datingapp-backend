@@ -23,7 +23,7 @@ namespace dating_backend.Data
         {
             // Initialize a queryable list of users, ordered by username. 
             // The AsQueryable method indicates the query is not executed against the database yet.
-            var users = _context.Users.OrderBy(u => u.Username).AsQueryable();
+            var users = _context.Users.OrderBy(u => u.UserName).AsQueryable();
             var likes = _context.Likes.AsQueryable();
 
             // If the predicate is "liked", filter for likes where the current user is the source.
@@ -47,7 +47,7 @@ namespace dating_backend.Data
             // Project the filtered list of users into a collection of LikeDto objects.
             var likedUsers = users.Select(user => new LikeDto
             {
-                Username = user.Username,
+                Username = user.UserName,
                 KnownAs = user.KnownAs,
                 Age = user.DateOfBirth.CalculateAge(),
                 PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain).Url,

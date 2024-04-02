@@ -21,7 +21,7 @@ namespace dating_backend.Data
         public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
         {
             var query = _context.Users.AsQueryable(); // Setting query variable to be a queryable.
-            query = query.Where(u => u.Username != userParams.CurrentUsername); // Removing the currentUser from GetMembersAsync function.
+            query = query.Where(u => u.UserName != userParams.CurrentUsername); // Removing the currentUser from GetMembersAsync function.
             query = query.Where(u => u.Gender == userParams.Gender); // Adding a where to get the gender user selected.
 
             var minDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MaxAge - 1));
@@ -42,7 +42,7 @@ namespace dating_backend.Data
 
         public Task<MemberDto> GetMemberAsync(string username)
         {
-            return _context.Users.Where(x => x.Username == username).ProjectTo<MemberDto>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
+            return _context.Users.Where(x => x.UserName == username).ProjectTo<MemberDto>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
         }
 
         public async Task<User> GetUserByIdAsync(int id)
@@ -52,7 +52,7 @@ namespace dating_backend.Data
 
         public async Task<User> GetUserByUsernameAsync(string username)
         {
-            return await _context.Users.Include(p => p.Photos).SingleOrDefaultAsync(x => x.Username == username);
+            return await _context.Users.Include(p => p.Photos).SingleOrDefaultAsync(x => x.UserName == username);
         }
 
         public async Task<IEnumerable<User>> GetUsersAsync()

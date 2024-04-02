@@ -21,8 +21,28 @@ namespace dating_backend.Extensions
             services.AddScoped<LogUserActivity>();
             services.AddScoped<ILikesRepository, LikesRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<RoleInitializerService>();
+
 
             return services;
+        }
+
+        public static void InitializeRoles(this IServiceProvider services)
+        {
+            using (var scope = services.CreateScope())
+            {
+                var roleInitializerService = scope.ServiceProvider.GetRequiredService<RoleInitializerService>();
+                roleInitializerService.InitializeRoles().Wait();
+            }
+        }
+
+        public static void ApplyMigrations(this IServiceProvider services)
+        {
+            using (var scope = services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+                context.Database.Migrate();
+            }
         }
     }
 }

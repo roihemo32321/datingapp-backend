@@ -22,6 +22,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.Services.ApplyMigrations(); // Apply migrations method to apply migrations to the database.
+app.Services.InitializeRoles(); // Initialize roles method to seed roles to the database.
 app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
 
 app.UseHttpsRedirection();

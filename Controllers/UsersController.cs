@@ -27,7 +27,7 @@ namespace dating_backend.Controllers
         public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
         {
             var currentUser = await _userRepository.GetUserByUsernameAsync(User.GetUsername()); // Getting the currentUser that sent the req.
-            userParams.CurrentUsername = currentUser.Username;
+            userParams.CurrentUsername = currentUser.UserName;
 
             if (string.IsNullOrEmpty(userParams.Gender))
             {
@@ -88,7 +88,7 @@ namespace dating_backend.Controllers
             if (await _userRepository.SaveAllAsync())
             {
                 return CreatedAtAction(nameof(GetUser),
-                    new { username = user.Username },
+                    new { username = user.UserName },
                     _mapper.Map<PhotoDto>(photo)); // Returning a 201 response with the api where they can find the new created value.
             }
 
