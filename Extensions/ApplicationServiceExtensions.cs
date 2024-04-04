@@ -2,6 +2,7 @@
 using dating_backend.Helpers;
 using dating_backend.Interfaces;
 using dating_backend.Services;
+using dating_backend.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace dating_backend.Extensions
@@ -22,27 +23,11 @@ namespace dating_backend.Extensions
             services.AddScoped<ILikesRepository, LikesRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<RoleInitializerService>();
-
+            services.AddSignalR(); // Adding SignalR to our application.
+            services.AddSingleton<PresenceTracker>(); // Adding PresenceTracker to our application.
+                                                      // Singleton is used to keep the same instance of the class throughout the application.
 
             return services;
-        }
-
-        public static void InitializeRoles(this IServiceProvider services)
-        {
-            using (var scope = services.CreateScope())
-            {
-                var roleInitializerService = scope.ServiceProvider.GetRequiredService<RoleInitializerService>();
-                roleInitializerService.InitializeRoles().Wait();
-            }
-        }
-
-        public static void ApplyMigrations(this IServiceProvider services)
-        {
-            using (var scope = services.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-                context.Database.Migrate();
-            }
         }
     }
 }
